@@ -1,0 +1,120 @@
+<!-- This program visualizes mathematical series in a browser.
+Copyright (C) 2024  Tobias Straube
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
+
+<!DOCTYPE html> 
+<html>
+  <head>
+    <title>Folgenplotter</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, user-scalable=0"/>
+    <meta name="description" content="Ein Tool, um mathematische Folgen von Zahlen und Funktionen zu visualisieren.">
+    <meta name="keywords" content="Folgenplotter">
+    <link rel="icon" href="images/Icon.png">
+    <link rel="stylesheet" href="styles/style.css">
+    <script language="javascript" type="text/javascript" nomodule src="scripts/nomoduleinfo.js"></script>
+    <script language="javascript" type="module" src="scripts/protocolinfo.js"></script>
+    <script language="javascript" type="module" src="scripts/uiupdater.js" defer></script>
+  </head>
+
+  <body>
+    <img id="dark-mode-toggle" class="icon clickable" src="images/dark_mode_toggle_dark_mode.png">
+    <main>
+      <div id="sidebar-left" class="sidebar">
+        <select id="series-selector" class="rounded-border clickable">
+          <option value="series-real-numbers">Reelle Zahlenfolgen</option>
+          <option value="series-real-functions">Reelle Funktionenfolgen</option>
+        </select>
+        <div id="series-container" class="rounded-border">
+          <ul id="list-of-series">
+            <li>
+              <input id="first-series-color" type="color" value="#808080" class="rounded-border">
+              <input id="first-series" class="input-text" type="text" value="(n^2)/20">
+              <img id="first-series-hide" class="icon clickable" src="images/show_dark_mode.png">
+              <img id="first-series-delete" class="icon delete-button clickable" src="images/delete_dark_mode.png">
+            </li>
+          </ul>
+          <input type="button" id="add-series" class="rounded-border clickable" value="+">
+        </div>
+      </div>
+
+      <div id="canvas-wrapper">
+        <input type="button" id="render-button" class="canvas-stack rounded-border clickable" value="Rendern starten!">
+        <img id="pause-button" class="canvas-stack clickable" src="images/play_dark_mode.png" hidden>
+        <div id="current-n-label" class="canvas-stack" hidden>n&nbsp;=&nbsp;0.00</div>
+        <div id="canvas-overlay" class="canvas-stack"></div>
+        <canvas id="canvas2D" class="canvas-stack" width="600" height="600">Your browser does not support the HTML5 canvas tag.</canvas>
+        <canvas id="canvasGL" class="canvas-stack" width="600" height="600">Your browser does not support the HTML5 canvas tag.</canvas>
+      </div>
+
+      <div id="sidebar-right" class="sidebar">
+        <select id="visualization-selector" class="rounded-border clickable">
+          <option value="visualization-spatial">Räumliche Darstellung</option>
+          <option value="visualization-temporal" disabled>Zeitliche Darstellung</option>
+        </select>
+        <div id="n-range">
+          <div class="rounded-border just-numbers">
+            <input type="text" id="min-n" class="number-input" value="1">
+          </div>
+          <div id="n-symbol">≤&nbsp;&nbsp;n&nbsp;&nbsp;≤</div>
+          <div class="rounded-border just-numbers">
+            <input type="text" id="max-n" class="number-input" value="100">
+          </div>
+        </div>
+        <div id="n-temporal-range" class="hidden">
+          <div class="rounded-border just-numbers">
+            <input type="text" id="min-n-temporal" class="number-input" value="0">
+          </div>
+          <div id="n-symbol-temporal">≤&nbsp;&nbsp;n&nbsp;&nbsp;≤</div>
+          <div class="rounded-border just-numbers">
+            <input type="text" id="max-n-temporal" class="number-input" value="40">
+          </div>
+        </div>
+        <input type="range" id="current-n" min="0" max="40" value="0" hidden>
+        <div id="more-options" class="rounded-border scrollable">
+          <div id="x-resolution-slider-wrapper" class="an-option-slider-container hidden">
+            <label for="x-resolution-slider" id="x-resolution-slider-label" class="slider-label">x-Auflösung:&nbsp;<div>1</div></label>
+            <input type="range" id="x-resolution-slider" class="an-option-slider" min="1" max="460" value="100" step="1">
+          </div>
+          <div id="animation-duration-slider-wrapper" class="an-option-slider-container hidden">
+            <label for="animation-duration-slider" id="animation-duration-slider-label" class="slider-label">Animationsdauer:&nbsp;<div>1</div></label>
+            <input type="range" id="animation-duration-slider" class="an-option-slider" min="3" max="480" value="120" step="1">
+          </div>
+          <div id="interpolation-option-wrapper" class="an-option hidden">
+            <input type="checkbox" id="interpolation" checked>
+            <label for="interpolation">Interpolation</label>
+          </div>
+          <div class="an-option">
+            <input type="checkbox" id="spatial-connection-lines" checked>
+            <label for="spatial-connection-lines">Verbindungslinien</label>
+          </div>
+          <div id="lowering-resolution-wrapper" class="an-option">
+            <input type="checkbox" id="lowering-resolution" checked>
+            <label for="lowering-resolution">Dynamische Auflösung</label>
+          </div>
+          <div id="coordinate-system-toggle-wrapper" class="an-option">
+            <input type="checkbox" id="coordinate-system-toggle" checked>
+            <label for="coordinate-system-toggle">Koordinatensystem</label>
+          </div>
+        </div>
+        <!-- <div id="import-export">
+          <label for="import-hidden" id="import" class="rounded-border clickable">Importieren</label>
+          <input type="file" accept=".xml" id="import-hidden" hidden>
+          <a href="data:application/xml;charset=utf-8," download="folgen.xml" id="export" class="rounded-border clickable">Exportieren</a>
+        </div> -->
+      </div>
+    </main>
+  </body>
+</html>
