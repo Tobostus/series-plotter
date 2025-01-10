@@ -1,5 +1,5 @@
 // This program visualizes mathematical series in a browser.
-// Copyright (C) 2024  Tobias Straube
+// Copyright (C) 2024-2025  Tobias Straube
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,11 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import { addAndSetVariables, getImportedVariables } from "./file_io.js";
 import Point2D from "./classes/Point2D.js";
 import Line2D from "./classes/Line2D.js";
 import Label from "./classes/Label.js";
 import CoordinateSystem from "./classes/CoordinateSystem.js";
-import { updateNRange, getCurrentMinN, getCurrentMaxN, getMouseDown, isTouchDown,
+import { isVariableOfType,
+    updateNRange, getCurrentMinN, getCurrentMaxN, getMouseDown, isTouchDown,
     getInputSeriesColorsHex, getInputSeriesIsVisible, canvasWidth, canvasHeight, getSeriesType,
     getVisualizationType as getVisualizationTypeFromUI,
     setCurrentNTo, getXResolution } from "./uiupdater.js";
@@ -31,6 +33,9 @@ canvasContext.font = getComputedStyle(document.documentElement).getPropertyValue
 canvasContext.textBaseline = "top";
 canvasContext.textAlign = "end";
 canvasContext.textAlign = "end";
+
+// every other value is already implicitly provided through the UI
+const listOfNumbersToSave = ["frame", "bottomLeftPoint.y", "visibleHeight"];
 
 let amountOfFrames = 100;
 let startingFrame = 0;
@@ -80,15 +85,15 @@ for(let i = 0; i < 5; i++) {
     }
 }
 
-document.getElementById("canvas-wrapper").addEventListener("mousemove", function(event) {
+export function handleMouseMoveEvent(event) {
     if(!getMouseDown() || animated) {
         return;
     }
 
     scrollCoordinateSystem(new Point2D(event.clientX, event.clientY));
-});
+}
 
-document.getElementById("canvas-wrapper").addEventListener("touchmove", function(event) {
+export function handleTouchMoveEvent(event) {
     if(!isTouchDown() || animated) {
         return;
     }
@@ -134,9 +139,9 @@ document.getElementById("canvas-wrapper").addEventListener("touchmove", function
 
         setOldDistance(newDistance);
     }
-});
+}
 
-document.getElementById("canvas-wrapper").addEventListener("wheel", function(event) {
+export function handleWheelEvent(event) {
     if(animated) {
         return;
     }
@@ -157,7 +162,7 @@ document.getElementById("canvas-wrapper").addEventListener("wheel", function(eve
         factorY = 1;
     }
     scaleCoordinateSystem(center, factorX, factorY);
-});
+}
 
 /**
  * Initializes some variables that could not be initialized at load.
@@ -166,6 +171,52 @@ export function initialize() {
     bottomLeftPoint = new Point2D(-10, -10);
     coordinateSystem = new CoordinateSystem(5, 5, true);
     oldMousePosition = new Point2D(0, 0);
+}
+
+/**
+ * Passes all variables that need to be saved on to file_io.js.
+ */
+export function prepareXMLExport() {
+    for(let variable of listOfNumbersToSave) {
+        addAndSetVariables([variable, eval(variable)]);
+    }
+}
+
+/**
+ * Checks if the imported values are of the correct type for all variables
+ * that are used in this module.
+ * @returns _0_ if there is no problem, _-1_ if a type doesn't match.
+ */
+function checkTypesOfImportedVariables(variables) {
+    for(let num of listOfNumbersToSave) {
+        if(!isVariableOfType(variables[num], "number")) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+/**
+ * Gets the data loaded from XML from file_io.js and applies it.
+ */
+export function applySettingsFromXML(rendering) {
+
+    const variables = getImportedVariables();
+
+    // check if at least the types are correct
+    if(checkTypesOfImportedVariables(variables) === -1) {
+        console.error("Da hat wohl jemand an der exportierten Datei rumgespielt.");
+        return;
+    }
+
+    if(startingFrame <= variables["frame"] && variables["frame"] < startingFrame + amountOfFrames) {
+        frame = variables["frame"];
+    } else {
+        frame = startingFrame;
+    }
+
+    // visibleWidth has already been set by the values in uiupdater, thus we want to keep it how it is
+    recenterCoordinateSystem(bottomLeftPoint.x, variables["bottomLeftPoint.y"], visibleWidth, variables["visibleHeight"], rendering);
 }
 
 /**
@@ -180,12 +231,17 @@ function resetAnimationCycle() {
  * Sets the current **frame** used for calculation of the animation, usually meaning **frame** = **n**;
  * @param {number} newFrame - The new value of frame.
  * @param {boolean} sliderUpdate - If this method is called from an update to the slider, set **sliderUpdate** to _true_.
+ * @param {boolean} recalculate - If the current frames should be recalculated.
  * Otherwise, there would be a one-off-error when called from elsewhere.
  */
-export function setFrame(newFrame, sliderUpdate = false) {
+export function setFrame(newFrame, sliderUpdate = false, recalculate = true) {
     frame = newFrame;
-    recalculateCurrentFrames(sliderUpdate);
-    resetAnimationCycle();
+    if(getVisualizationType() === "temporal") {
+        if(recalculate) {
+            recalculateCurrentFrames(sliderUpdate);
+        }
+        resetAnimationCycle();
+    }
 }
 
 /**
@@ -331,14 +387,21 @@ function updateNRangeInUI() {
 
 /**
  * Recenters the coordinate system to standard values.
+ * @param {number} bottomLeftX - New x value of bottomLeftPoint.
+ * @param {number} bottomLeftY - New y value of bottomLeftPoint.
+ * @param {number} width - New visible width of the coordinate system.
+ * @param {number} height - New visible height of the coordinate system.
+ * @param {boolean} rendering - Wether we are already (re)rendering.
  */
-export function recenterCoordinateSystem() {
-    bottomLeftPoint = new Point2D(-10,-10);
-    const factorX = 50 / visibleWidth;
-    const factorY = 50 / visibleHeight;
-    scaleCoordinateSystem(new Point2D(), factorX, factorY);
+export function recenterCoordinateSystem(bottomLeftX = -10, bottomLeftY = -10, width = 50, height = 50, rendering = true) {
+    bottomLeftPoint = new Point2D(bottomLeftX, bottomLeftY);
+    const factorX = width / visibleWidth;
+    const factorY = height / visibleHeight;
+    scaleCoordinateSystem(new Point2D(), factorX, factorY, rendering);
     updateNRangeInUI();
-    recalculateCoordinateSystemAndRedraw();
+    if(rendering) {
+        recalculateCoordinateSystemAndRedraw();
+    }
 }
 
 /**
@@ -359,15 +422,16 @@ function calculateNStepSize() {
  * Sets the range in x that should be visible on the screen.
  * @param {number} minX - New minimum value for x.
  * @param {number} maxX - New maximum value for x.
+ * @param {boolean} rendering - If the scene should be rerendered.
  */
-export function setXRange(minX, maxX) {
+export function setXRange(minX, maxX, rendering = true) {
     if(maxX <= minX + 1) {
-        console.log("Der kleinste Wert für n darf nicht größer sein als der größte. "
+        console.error("Der kleinste Wert für n darf nicht größer sein als der größte. "
             + "Die Differenz zwischen den Grenzen muss außerdem mindestens 2 betragen.");
         return;
     }
     const scaleFactorX = (maxX - minX) / visibleWidth;
-    scaleCoordinateSystem(new Point2D(), scaleFactorX, 1);
+    scaleCoordinateSystem(new Point2D(), scaleFactorX, 1, rendering);
     bottomLeftPoint.x = minX;
     updateNRangeInUI();
 }
@@ -983,8 +1047,9 @@ function getClosestMagnitude(value) {
  * @param {Point2D} center - The fixed center of the scaling (in CSS pixels).
  * @param {number} factorX - The factor with which the x-axis should be scaled.
  * @param {number} factorY - The factor with which the y-axis should be scaled.
+ * @param {boolean} rendering - If the scene should be rerendered.
  */
-function scaleCoordinateSystem(center, factorX, factorY) {
+function scaleCoordinateSystem(center, factorX, factorY, rendering = true) {
     let tmp = bottomLeftPoint.translate(center
         .toCoordinateSystemWithoutTranslation(visibleWidth, visibleHeight, canvasWidth, canvasHeight));
 
@@ -1005,5 +1070,7 @@ function scaleCoordinateSystem(center, factorX, factorY) {
     bottomLeftPoint = tmp.translate(center
         .toCoordinateSystemWithoutTranslation(-visibleWidth, -visibleHeight, canvasWidth, canvasHeight));
 
-    updateViewWithRespectToAnimationProgress();
+    if(rendering) {
+        updateViewWithRespectToAnimationProgress();
+    }
 }

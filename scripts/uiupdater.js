@@ -1,5 +1,5 @@
 // This program visualizes mathematical series in a browser.
-// Copyright (C) 2024  Tobias Straube
+// Copyright (C) 2024-2025  Tobias Straube
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,10 @@
 const sliderIntervals = [100, 190, 280, 370, 460];
 const intervalScales = [0.01, 0.1, 1, 10, 100];
 
-import { setConnectionLines as setConnectionLines2D, setDownScaling as setDownScaling2D,
+import { addAndSetVariables, addAndSetSeries, exportXML, importXML,
+    getImportedVariables, clearAllVariables, getImportedSeries, clearAllSeries } from "./file_io.js";
+import { applySettingsFromXML as applySettingsFromXMLRenderer2D, prepareXMLExport as prepareXMLExportRenderer2D,
+    setConnectionLines as setConnectionLines2D, setDownScaling as setDownScaling2D,
     setInterpolation as setInterpolation2D,
     initialize as initializeRenderer2D, redraw as redraw2D,
     startAnimation as startAnimation2D, stopAnimation as stopAnimation2D, startRenderingWithoutAnimation as startRenderingWithoutAnimation2D,
@@ -28,7 +31,9 @@ import { setConnectionLines as setConnectionLines2D, setDownScaling as setDownSc
     setFrame as setFrame2D, setFrameRange as setFrameRange2D,
     setAnimationDuration as setAnimationDuration2D,
     updateViewWithRespectToAnimationProgress as updateViewWithRespectToAnimationProgress2D, 
-    setEnableCoordinateSystem as setEnableCoordinateSystem2D} from "./renderer2d.js";
+    setEnableCoordinateSystem as setEnableCoordinateSystem2D,
+    handleMouseMoveEvent as handleMouseMoveEvent2D, handleTouchMoveEvent as handleTouchMoveEvent2D,
+    handleWheelEvent as handleWheelEvent2D } from "./renderer2d.js";
 import { processInput } from "./parser.js";
 
 const canvas2D = document.getElementById('canvas2D');
@@ -48,6 +53,9 @@ const canvasWrapper = document.getElementById('canvas-wrapper');
 
 const seriesSelector = document.getElementById("series-selector");
 const visualizationSelector = document.getElementById("visualization-selector");
+    
+const optionSpatial = visualizationSelector.options[0];
+const optionTemporal = visualizationSelector.options[1];
 
 const nSymbolForSpatialRange = document.getElementById("n-symbol");
 const nTemporalRange = document.getElementById("n-temporal-range");
@@ -85,6 +93,10 @@ const maxNField = document.getElementById("max-n");
 const minNTemporalField = document.getElementById("min-n-temporal");
 const maxNTemporalField = document.getElementById("max-n-temporal");
 
+const importButton = document.getElementById("import");
+const importInput = document.getElementById("import-hidden");
+const exportButton = document.getElementById("export");
+
 const playDarkModeImage = "images/play_dark_mode.png";
 const playLightModeImage = "images/play_light_mode.png";
 const pauseDarkModeImage = "images/pause_dark_mode.png";
@@ -101,6 +113,23 @@ const darkModeToggleDarkModeImage = "images/dark_mode_toggle_dark_mode.png";
 const darkModeToggleLightModeImage = "images/dark_mode_toggle_light_mode.png";
 
 const htmlElement = "htmlelement";
+
+/**
+ *  What visualizations are currently allowed, e.g. the list at index _0_
+ *  represents series of real numbers, an inner entry of _0_ means spatial
+ *  viualization is enabled for that type of series.
+ */
+const allowedVisualizations = [[0],[1]];
+
+const listOfNumbersToSave = ["seriesSelector.selectedIndex", "visualizationSelector.selectedIndex",
+    "currentMinN", "currentMaxN"];
+
+const listOfBooleansToSave = ["spatialConnectionLinesOption.checked", "loweringResolutionOption.checked",
+    "interpolationOption.checked", "coordinateSystemToggle.checked"];
+
+const listOfNumsAsStringsToSave = ["minNTemporalField.value", "maxNTemporalField.value",
+    "currentNSlider.min", "currentNSlider.max", "currentNSlider.value",
+    "xResolutionSlider.value", "animationDurationSlider.value"];
 
 let firstEverToggle = true;
 let rendering = false;
@@ -247,16 +276,14 @@ function addEventListeners() {
     });
 
     seriesSelector.addEventListener("change", function() {
-        switch(seriesSelector.value) {
-            case "series-real-numbers":
-                updateUIForTypeOfSeries(0, false, true);
-            break;
-            case "series-real-functions":
-                updateUIForTypeOfSeries(1, true, false);
-            break;
-        }
+        updateUIForTypeOfSeries(seriesSelector.selectedIndex);
         updateVisualizationStyle();
     });
+
+    // binding to functions in renderer2d.js
+    canvasWrapper.addEventListener("mousemove", function(event) { if(rendering) { handleMouseMoveEvent2D(event); } });
+    canvasWrapper.addEventListener("touchmove", function(event) { if(rendering) { handleTouchMoveEvent2D(event); } });
+    canvasWrapper.addEventListener("wheel", function(event) { if(rendering) { handleWheelEvent2D(event); } });
 
     currentNSlider.addEventListener("input", updateCurrentN);
 
@@ -265,6 +292,26 @@ function addEventListeners() {
     addEnterListener(firstSeries, useNewInput);
     firstSeriesColor.addEventListener("change", function() {
         useNewInput();
+    });
+
+    importButton.addEventListener("click", function() { importInput.value = null; });
+    importInput.addEventListener("change", function(event) {
+        clearAllVariables();
+        clearAllSeries();
+        importXML(event.target.files[0])
+            .then(msg => {
+                console.log(msg);
+                applySettingsFromXML();
+            })
+            .catch(error => {
+                clearAllVariables();
+                clearAllSeries();
+                console.error(error);
+            });
+    });
+    exportButton.addEventListener("click", function() {
+        prepareXMLExport();
+        exportXML();
     });
 
     window.addEventListener("beforeunload", function(event) {
@@ -292,49 +339,182 @@ function initialize() {
 
     minNTemporalField.value = "0";
     maxNTemporalField.value = "50";
-    currentNSlider.min = "0";
-    currentNSlider.max = "50";
+    currentNSlider.min = "-10";
+    currentNSlider.max = "40";
     currentNSlider.value = "0";
-    setXResolution();
-
-    minNTemporalField.value = "0";
-    maxNTemporalField.value = "50";
-    setFrameRange2D(0, 50);
 
     xResolutionSlider.value = "100";
-    setXResolution();
     animationDurationSlider.value = "120";
-    setAnimationDuration();
 
     spatialConnectionLinesOption.checked = true;
     loweringResolutionOption.checked = true;
     interpolationOption.checked = true;
     coordinateSystemToggle.checked = true;
 
-    toggleSpatialConnectionLines(spatialConnectionLinesOption);
-    toggleDownScaling(loweringResolutionOption);
-    toggleInterpolation(interpolationOption);
-    toggleEnableCoordinateSystem(coordinateSystemToggle);
+    updateNRange(-10, 40);
 
     addEventListeners();
 
     initializeRenderer2D();
+
+    propagateAllChangesInTheUI();
 }
 
 /**
- * 
- * @param {number} index - _0_ means series of real numbers, _1_ means series of real functions.
- * @param {boolean} enableSpatial - _true_ iff you should be allowed to select spatial visualization.
- * @param {boolean} enableTemporal - _true_ iff you should be allowed to select temporal visualization.
+ * Applies all changes to the corresponding variables.
  */
-function updateUIForTypeOfSeries(index, enableSpatial, enableTemporal) {
-    
-    const optionSpatial = visualizationSelector.options[0];
-    const optionTemporal = visualizationSelector.options[1];
+function propagateAllChangesInTheUI() {
+    setNewNTemporalRange();
+    setNewNRange();
+    setXResolution();
+    setAnimationDuration();
+    toggleSpatialConnectionLines(spatialConnectionLinesOption);
+    toggleDownScaling(loweringResolutionOption);
+    toggleInterpolation(interpolationOption);
+    toggleEnableCoordinateSystem(coordinateSystemToggle);
+    useNewInput();
+    updateVisualizationStyle();
+}
 
-    visualizationSelector.selectedIndex = index;
-    optionSpatial.disabled = enableSpatial;
-    optionTemporal.disabled = enableTemporal;
+/**
+ * Passes all variables that need to be saved on to file_io.js.
+ */
+function prepareXMLExport() {
+
+    clearAllVariables();
+    clearAllSeries();
+
+    for(let variable of listOfBooleansToSave.concat(listOfNumbersToSave).concat(listOfNumsAsStringsToSave)) {
+        addAndSetVariables([variable, eval(variable)]);
+    }
+
+    const series = getInputSeries();
+    const colors = getInputSeriesColorsHex();
+    const isVisible = getInputSeriesIsVisible();
+    for(let index in series) {
+        addAndSetSeries([series[index], colors[index], isVisible[index]]);
+    }
+
+    prepareXMLExportRenderer2D();
+}
+
+/**
+ * @param {any} variable - The variable to be typechecked.
+ * @param {String} type - The type it is supposed to be.
+ * @returns _true_ if variable is of type **type**, _false_ otherwise.
+ */
+export function isVariableOfType(variable, type) {
+    return typeof(variable) === type;
+}
+
+/**
+ * Checks if the imported values are of the correct type for all variables
+ * that are used in this module.
+ * @returns _0_ if there is no problem, _-1_ if a type doesn't match.
+ */
+function checkTypesOfImportedVariables(variables) {
+
+    for(let num of listOfNumbersToSave) {
+        if(!isVariableOfType(variables[num], "number")) {
+            return -1;
+        }
+    }
+    for(let bool of listOfBooleansToSave) {
+        if(!isVariableOfType(variables[bool], "boolean")) {
+            return -1;
+        }
+    }
+    for(let str of listOfNumsAsStringsToSave) {
+        if(!isVariableOfType(variables[str], "string")) {
+            return -1;
+        }
+        if(isNaN(Number(variables[str]))) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+/**
+ * Gets the data loaded from XML from file_io.js and applies it.
+ */
+function applySettingsFromXML() {
+
+    const variables = getImportedVariables();
+
+    // check if at least the types are correct
+    if(checkTypesOfImportedVariables(variables) === -1) {
+        console.error("Da hat wohl jemand an der exportierten Datei rumgespielt.");
+        return;
+    }
+    
+    // make sure it's in the right range and an allowed combination
+    const seriesIndex = Math.max(0, Math.min(seriesSelector.childElementCount-1,
+        variables["seriesSelector.selectedIndex"]));
+    updateUIForTypeOfSeries(seriesIndex);
+    const visualizationIndex = variables["visualizationSelector.selectedIndex"];
+    visualizationSelector.selectedIndex = allowedVisualizations[seriesIndex].includes(visualizationIndex) ?
+        visualizationIndex : allowedVisualizations[seriesIndex][0];
+    
+    // uses the loaded values and applies them directly
+    // this might need further error checking in a later version
+    for(let str of listOfNumsAsStringsToSave) {
+        eval(str + " = variables[\"" + str + "\"];");
+    }
+    for(let bool of listOfBooleansToSave) {
+        eval(bool + " = variables[\"" + bool + "\"];");
+    }
+
+    updateNRange(variables["currentMinN"], variables["currentMaxN"]);
+
+    const series = getImportedSeries();
+    let listOfSeriesColors = getInputSeriesChild(0, htmlElement);
+    let listOfSeriesInputs = getInputSeriesChild(1, htmlElement);
+    let listOfSeriesIsVisible = getInputSeriesIsVisible();
+
+    let index;
+    for(index = 0; index < series.length; index++) {
+        let textField = listOfSeriesInputs[index];
+        let colorPicker = listOfSeriesColors[index];
+        let wasVisibleBefore = listOfSeriesIsVisible[index];
+        if(textField) {
+            textField.value = series[index][0];
+            colorPicker.value = series[index][1];
+            if(wasVisibleBefore ^ series[index][2]) {
+                swapHideButtonImage(getInputSeriesChild(2, htmlElement)[index]);   
+            }
+        } else {
+            addEntry(false);
+            listOfSeriesColors = getInputSeriesChild(0, htmlElement);
+            listOfSeriesInputs = getInputSeriesChild(1, htmlElement);
+            listOfSeriesIsVisible = getInputSeriesIsVisible();
+            index--;
+        }
+    }
+
+    index++;
+    while(listOfSeries.childElementCount > index || (series.length == 0 && listOfSeries.childElementCount > 0)) {
+        listOfSeries.removeChild(listOfSeries.lastChild);
+    }
+
+    propagateAllChangesInTheUI();
+    
+    applySettingsFromXMLRenderer2D(rendering);
+}
+
+/**
+ * This function updates the UI depending on what type of series you select. It uses **allowedVisualizations**
+ * to determine which visualization style should be enabled and which disabled.
+ * @param {number} index - _0_ means series of real numbers, _1_ means series of real functions.
+ */
+function updateUIForTypeOfSeries(index) {
+
+    seriesSelector.selectedIndex = index;
+    optionSpatial.disabled = !allowedVisualizations[index].includes(0);
+    optionTemporal.disabled = !allowedVisualizations[index].includes(1);
+
+    visualizationSelector.selectedIndex = allowedVisualizations[index][0];
 
     const isRealNumbers = index === 0;
 
@@ -402,7 +582,7 @@ function setCurrentNLabelTo(n, highlighted=false) {
 function updateCurrentN() {
     const frame = Number(currentNSlider.value);
     setCurrentNLabelTo(frame);
-    setFrame2D(frame, true);
+    setFrame2D(frame, true, rendering);
     if(rendering) {
         redraw2D(false);
     }
@@ -576,7 +756,7 @@ function useNewInput() {
 /**
  * Adds a new HTML element to **list-of-series** and gives it focus.
  */
-function addEntry() {
+function addEntry(focus = true) {
     const entry = document.createElement("li");
     const darkMode = document.documentElement.className != 'light';
 
@@ -618,7 +798,10 @@ function addEntry() {
     entry.appendChild(deleteButton);
 
     listOfSeries.append(entry);
-    textField.focus();
+
+    if(focus) {
+        textField.focus();   
+    }
 }
 
 /**
@@ -629,7 +812,6 @@ function deleteParentContainer(child) {
     const parent = child.parentNode;
     parent.remove();
     useNewInput();
-
 }
 
 /**
@@ -727,12 +909,12 @@ function setNewNRange() {
     const type = getVisualizationType() == "visualization-temporal" ? "x" : "n";
 
     if(!isWholeNumber(minN)) {
-        console.log("Die eingegebene untere Grenze fuer "+type+" ist keine ganze Zahl:", minN);
+        console.error("Die eingegebene untere Grenze fuer "+type+" ist keine ganze Zahl:", minN);
         return;
     }
 
     if(!isWholeNumber(maxN)) {
-        console.log("Die eingegebene obere Grenze fuer "+type+" ist keine ganze Zahl:", maxN);
+        console.error("Die eingegebene obere Grenze fuer "+type+" ist keine ganze Zahl:", maxN);
         return;
     }
 
@@ -741,8 +923,11 @@ function setNewNRange() {
     //     return;
     // }
 
-    setXRange2D(parseInt(minN), parseInt(maxN));
-    recalculateCoordinateSystemAndRedraw2D();
+    setXRange2D(parseInt(minN), parseInt(maxN), rendering);
+
+    if(rendering) {
+        recalculateCoordinateSystemAndRedraw2D();
+    }
 }
 
 /**
@@ -759,12 +944,12 @@ function setNewNTemporalRange() {
     const maxN = maxNTemporalField.value;
 
     if(!isWholeNumber(minN)) {
-        console.log("Die eingegebene untere Grenze für n ist keine ganze Zahl:", minN);
+        console.error("Die eingegebene untere Grenze für n ist keine ganze Zahl:", minN);
         return;
     }
 
     if(!isWholeNumber(maxN)) {
-        console.log("Die eingegebene obere Grenze für n ist keine ganze Zahl:", maxN);
+        console.error("Die eingegebene obere Grenze für n ist keine ganze Zahl:", maxN);
         return;
     }
 

@@ -407,7 +407,7 @@ a:link, a:visited, a:hover, a:active {
   box-sizing: border-box;
   width: 100%;
   margin-top: var(--margins);
-  /* margin-bottom: var(--margins); */
+  margin-bottom: var(--margins);
 }
 
 #import-export {

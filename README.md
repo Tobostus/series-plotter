@@ -1,82 +1,89 @@
-#### _[Read the English version here.](README-EN.md)_
+#### _[English version here.](README-EN.md)_
 
 # series-plotter
 Mit diesem Tool kann man sich beliebige reelle Zahlenfolgen oder reelle Funktionenfolgen veranschaulichen lassen.
 
-## Kompatibilität
-Das Projekt verwendet JavaScript-Module, daher kann es nur verwendet werden, wenn die Seite über **http** oder **https** aufgerufen wird!
-Module werden von jedem modernen Browser unterstützt. Die aktuelle Version des Tools ist unter https://tobostus.github.io/series-plotter abrufbar.
+## Zugang
+Die aktuelle Version des Tools ist unter https://tobostus.github.io/series-plotter verfügbar.
+
+## Kompatibilitätshinweis
+Das Projekt verwendet JavaScript-Module. Module werden von jedem modernen Browser unterstützt.
+Stellt sicher, dass ihr die Seite über **http** oder **https** aufruft.
 Falls ihr für Testzwecke selbst eine lokale Kopie hosten wollt, empfehlen wir [VSCode](https://code.visualstudio.com/) mit der Extension **Live Server** von Ritwick Dey.
 
 ## Benutzeroberfläche
-*Das Programm ist für die Nutzung mit [Firefox](https://www.mozilla.org/de/firefox/new/) optimiert. In anderen Browsern können Elemente unschön erscheinen.*
+*Das Programm ist für die Nutzung mit [Firefox](https://www.mozilla.org/de/firefox/new/) optimiert. In anderen Browsern können Elemente anders aussehen.*
 
-Sobald ihr die Seite aufgerufen habt, werdet ihr von folgender Nutzeroberfläche begrüßt:
+Wenn ihr die Seite aufruft, werdet ihr von folgender Nutzeroberfläche begrüßt:
 
 ![Screenshot](/images/Screenshot_with_numbers.png)
 
 1. Eine Dropdown-Liste, um die Art der Folge auszuwählen, z.B. "Reelle Funktionenfolgen".
 
-2. Hier gebt ihr eure Folgen ein, die [Syntax](#syntax) dafür findet ihr [hier](#syntax). Ihr könnt eine neue Folge durch den Button mit
+2. Eine Liste, in die ihr eure Folgen eintragen könnt. Die [Syntax](#syntax) dafür findet ihr [hier](#syntax). Ihr könnt eine neue Folge durch den Button mit
 dem **+** hinzufügen. Bereits vorhandene Folgen können mit ![Mülltonne](/images/Delete_button_inline.png) gelöscht und mit ![Auge](/images/Hide_button_inline.png)
 aus- oder eingeblendet werden. Die Kreisscheibe links von einer Folge ist ein Farbwähler, mit dem ihr die Farbe der Punkte und Linien einer Folge anpassen könnt.
 
 3. Eine Dropdown-Liste, um die Art der Visualisierung auszuwählen, z.B. "Zeitliche Darstellung".
 
-4. In diesem Feld könnt ihr zusätzliche [Optionen](#einstellungen) einstellen. Je nach Wahl in 1. und 3. gibt es hier unterschiedliche Möglichkeiten. Mehr dazu findet ihr unter [Einstellungen](#einstellungen).
+4. Ein Feld, in dem ihr zusätzliche [Optionen](#einstellungen) finden könnt. Je nach Wahl in (1) und (3) gibt es hier unterschiedliche Möglichkeiten. Mehr dazu findet ihr unter [Einstellungen](#einstellungen).
 
-5. Das ist das Hauptfenster: Hier werden euch die Folgen angezeigt, sobald ihr auf "Rendern starten!" drückt. Zur [Navigation](#navigation) findet ihr [hier](#navigation) die Infos.
+5. Das Hauptfenster: Hier werden euch die Folgen angezeigt, sobald ihr auf "Rendern starten!" drückt. Zur [Navigation](#navigation) findet ihr [hier](#navigation) die Informationen.
 
 6. Mit dem Button in der oberen rechten Ecke könnt ihr zwischen Light Mode und Dark Mode wechseln.
 
-Auf Mobilgeräten oder in sehr schmalen Browserfenstern wechselt die Oberfläche in den vertikalen Modus. Die Anordnung der Elemente ist dann etwas anders, aber die Funktionen bleiben gleich.
+7. Mit dem Button "Exportieren" könnt ihr all eure Eingaben und Einstellungen in einer XML-Datei exportieren. Diese wird beim Klick auf den Button automatisch heruntergeladen.
+
+8. Mit dem Button "Importieren" könnt ihr eine mithilfe von "Exportieren" (7) erstellte XML-Datei wieder in das Programm laden.
+
+Auf Mobilgeräten oder abhängig von der Breite des Browserfensters wechselt die Oberfläche in den vertikalen Modus. Die Anordnung der Elemente ist dann etwas anders, aber die Funktionen bleiben gleich.
 
 ## Navigation
 Um euer Koordinatensystem nach euren Wünschen auszurichten, gibt es folgende Möglichkeiten:
 | | Mausgesten | Touch-Gesten | Weitere Optionen |
-| :-----: | :-----: | :-----: | :-----: |
+| :---: | :---: | :---: | :---: |
 | Ausschnitt verschieben | Setze den Zeiger in das Hauptfenster, halte die linke Maustaste gedrückt und ziehe den Zeiger in die gewünschte Richtung. | Setze einen Finger an eine Stelle im Hauptfenster und ziehe in die gewünschte Richtung. | Stelle untere und obere Intervallgrenzen für $n$ oder $x$ über die Textfelder ein. |
 | Beide Achsen gleichzeitig skalieren | Gehe mit dem Zeiger zum gewünschten Zentrum der Skalierung (im Hauptfenster). Scrolle einfach mit dem Mausrad. | Setze zwei Finger in das Hauptfenster und ziehe sie diagonal auseinander bzw. führe sie zusammen. | - |
-| $x$-Achse skalieren | Shift + Mausrad | Horizontal mit zwei Fingern | Stelle untere und obere Intervallgrenzen für $n$ oder $x$ über die Textfelder ein. |
-| $y$-Achse skalieren | Strg  + Mausrad | Vertikal mit zwei Fingern | - |
+| $x$-Achse skalieren | `Shift` halten + Mausrad scrollen | Horizontal mit zwei Fingern zoomen | Stelle untere und obere Intervallgrenzen für $n$ oder $x$ über die Textfelder ein. |
+| $y$-Achse skalieren | `Strg` halten + Mausrad scrollen | Vertikal mit zwei Fingern zoomen | - |
 | Ausschnitt zurücksetzen | Doppelklick in das Hauptfenster. | Doppelt in das Hauptfenster tippen. | - |
 
 ## Einstellungen
 
 | | Räumliche Darstellung | Zeitliche Darstellung |
-| :-----: | :-----: | :-----: |
-| **Koordinatensystem** | Blendet das Koordinatensystem sowie die Hilfslinien ein oder aus. | Blendet das Koordinatensystem sowie die Hilfslinien ein oder aus. |
-| **Verbindungslinien** | Die Linien verbinden je zwei benachbarte Folgenmitglieder ($n$ und $n+1$). | Die Linien verbinden auch hier $n$ und $n+1$ miteinander, was für eine reelle Funktionenfolge $a_x(n)$ für festes $x$ je dem an den Punkt $(x,\,a_x(n))$ angesetzten Richtungsvektor $(0,\,a_x(n+1) - a_x(n))$ in y-Richtung entspricht. |
-| **Interpolation** | - | Interpoliert zwischen zwei Zuständen $n$ und $n+1$ linear die Position der Punkte. So sieht man besser, wo einzelne Punkte hinwandern. Das entspricht einem Folgen des Richtungsvektors $(0,\,a_x(n+1) - a_x(n))$. |
-| **Animationsdauer** | - | Die Dauer, die ein Wechsel von $n$ auf $n+1$ benötigt. Sie entspricht in etwa der Anzahl an Frames, d.h. eine kleinere Zahl bedeutet schnellere Animation. |
-| **Dynamische Auflösung** | Für einen sehr großen Definitionsbereich für $n$ erzeugt ein Punkt pro $n$ viel Lag. Diese Option lässt daher für große Bereiche einige Werte für $n$ aus. | - |
-| **$x$-Auflösung** | - | Falls man reelle Funktionenfolgen darstellt, kann man hiermit die Auflösung der $x$-Achse einstellen (in welchem Abstand Punkte berechnet werden sollen, ausgehend vom Ursprung). |
+| :---: | :---: | :---: |
+| **Koordinatensystem** | Blendet das Koordinatensystem sowie das Netz ein oder aus. | Blendet das Koordinatensystem sowie das Netz ein oder aus. |
+| **Verbindungslinien** | Blendet die Linien, die je zwei benachbarte Folgenmitglieder ($n$ und $n+1$) verbinden, ein oder aus. | Blendet die Linien, die $n$ und $n+1$ miteinander verbinden, ein oder aus. Für eine reelle Funktionenfolge $a_x(n)$ entspricht das für festes $x$ je dem an den Punkt $(x,\ a_x(n))^T$ angesetzten Richtungsvektor $(0,\ a_x(n+1) - a_x(n))^T$. |
+| **Interpolation** | - | Stellt die Interpolation von Punkten zwischen zwei Schritten $n$ und $n+1$ an oder aus. So sieht man besser, wo einzelne Punkte hinwandern. Das entspricht dem Folgen des Richtungsvektors $(0,\ a_x(n+1) - a_x(n))^T$. |
+| **Animationsdauer** | - | Stellt die Dauer ein, die ein Wechsel von $n$ auf $n+1$ benötigt. Sie entspricht in etwa der Anzahl an Frames, d.h. eine kleinere Zahl bedeutet eine schnellere Animation. |
+| **Dynamische Auflösung** | Stellt an oder aus, ob bei einem großen Definitionsbereich von $n$ Werte ausgelassen werden sollen. Für einen sehr großen Definitionsbereich von $n$ erzeugt ein Punkt pro $n$ viel Lag. | - |
+| **$x$-Auflösung** | - | Stellt die Auflösung der $x$-Achse ein (in welchem Abstand Punkte berechnet werden sollen, ausgehend vom Ursprung). Diese Einstellung betrifft reelle Funktionenfolgen. |
 
-_Achtung: Alle Berechnungen finden auf deinem Endgerät statt. Orientiere dich für die Einstellungen also an den Kapazitäten deiner Hardware. Das betrifft insbesondere **Dynamische Auflösung** und_ $x$**-Auflösung**.
+_Achtung: Alle Berechnungen finden auf deinem Endgerät statt. Orientiere dich für die Einstellungen also an den Kapazitäten deiner Hardware. Das betrifft insbesondere_ **Dynamische Auflösung** _und_ $x$**-Auflösung**.
 
 ## Syntax
 Die zu verwendene Syntax könnt ihr folgender Tabelle entnehmen:
 
-| LaTeX | Syntax | Beschreibung |
-| :-----: | :-----: | :-----: |
+| $\LaTeX$ | Syntax | Beschreibung |
+| :---: | :---: | :---: |
 | $$n$$ | n | Folgenindex $n\in\mathbb{N_{0}}$ |
 | $$x$$ | x | Funktionsargument $x\in\mathbb{R}$ |
 | $$10$$ | 10 | Ganzzahl $a\in\mathbb{Z}$ |
-| $$3.14$$ | 3.14 _oder_ 3,14 | Dezimalzahl $a\in\mathbb{Q}$ |
-| $$a+b\cdot i$$ | a+bi _oder_ a+b*i | Komplexe Zahl $a+b\cdot i\in\mathbb{C}$ |
-| $$\pi$$ | pi _oder_ Pi _oder_ PI | Kreiszahl Pi ($\pi$) |
-| $$e$$ | e _oder_ E | Eulersche Zahl $e$ |
+| $$3.14$$ | 3.14 <br /> 3,14 | Dezimalzahl $a\in\mathbb{Q}$ |
+| $$a+b\cdot i$$ | a+bi <br /> a+b*i | Komplexe Zahl $a+b\cdot i\in\mathbb{C}$ |
+| $$\pi$$ | pi <br /> Pi <br /> PI | Kreiszahl Pi ($\pi$) |
+| $$e$$ | e <br /> E | Eulersche Zahl $e$ |
 | $$f+g$$ | f + g | Addition |
 | $$f-g$$ | f - g | Subtraktion |
 | $$f\cdot g$$ | f * g | Multiplikation |
-| $$a\cdot x$$ | ax _oder_ a*x | Multiplikation mit Konstante $a$ |
+| $$a\cdot x$$ | ax <br /> a*x | Multiplikation mit Konstante $a$ |
 | $$\frac{f}{g}$$ | f / g | Division |
 | $$(f)$$ | (f) | Klammerung |
 | $$f^a$$ | f^a | Potenz |
 | $$\sum_{k=m}^{n}{a}$$ | sum(m; n; a; k) | Summe |
-| $$\prod_{k=1}^{n}{a}$$ | prod(1; n; a; k) _oder_ product(1; n; a; k) | Produkt |
-| $$\int_{a}^{b}{f \ \mathrm{d}x}$$ | int(a; b; f; x) _oder_ integral(a; b; f; x) | Integral |
-| $$\|x\|$$ | abs(x) _oder_ \|x\| | Betrag |
+| $$\prod_{k=1}^{n}{a}$$ | prod(1; n; a; k) <br /> product(1; n; a; k) | Produkt |
+| $$\int_{a}^{b}{f \ \mathrm{d}x}$$ | int(a; b; f; x) <br /> integral(a; b; f; x) | Integral |
+| $$\|x\|$$ | abs(x) <br /> \|x\| | Betrag |
 | $$\mathrm{sgn}(x)$$ | sign(x) | Vorzeichen |
 | $$\lfloor x\rfloor$$ | floor(x) | Abrunden |
 | $$\lceil x\rceil$$ | ceil(x) | Aufrunden |
