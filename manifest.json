@@ -1,21 +1,20 @@
 {
-    "name": "Folgenplotter",
-    "short_name": "Folgenplotter",
-    "icons": [
-      {
-        "src": "/images/app_icon_192px.png",
-        "type": "image/png",
-        "sizes": "192x192"
-      },
-      {
-        "src": "/images/app_icon_512px.png",
-        "type": "image/png",
-        "sizes": "512x512"
-      }
-    ],
-    "start-url": "/index.html",
-    "display": "standalone",
-    "theme_color": "#202020",
-    "background_color": "#121212"
-  }
-  
+  "name": "Folgenplotter",
+  "short_name": "Folgenplotter",
+  "icons": [
+    {
+      "src": "./images/app_icon_192px.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "./images/app_icon_512px.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start-url": "./",
+  "display": "standalone",
+  "theme_color": "#202020",
+  "background_color": "#121212"
+}
