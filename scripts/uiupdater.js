@@ -63,6 +63,7 @@ const currentNSlider = document.getElementById("current-n");
 const currentNLabel = document.getElementById("current-n-label");
 
 const darkModeToggle = document.getElementById('dark-mode-toggle');
+const helpButton = document.getElementById('help-button');
 
 const firstSeries = document.getElementById('first-series');
 const firstSeriesColor = document.getElementById('first-series-color');
@@ -111,6 +112,8 @@ const deleteDarkModeImage = "images/delete_dark_mode.png";
 const deleteLightModeImage = "images/delete_light_mode.png";
 const darkModeToggleDarkModeImage = "images/dark_mode_toggle_dark_mode.png";
 const darkModeToggleLightModeImage = "images/dark_mode_toggle_light_mode.png";
+const helpButtonDarkModeImage = "images/help_dark_mode.png";
+const helpButtonLightModeImage = "images/help_light_mode.png";
 
 const htmlElement = "htmlelement";
 
@@ -321,17 +324,30 @@ function addEventListeners() {
 }
 
 /**
+ * Improves useability for very large and very small mobile devices.
+ * For better use with tablets and smaller smartphones.
+ */
+function rescaleMobileViewports() {
+
+    const currentClientWidth = document.documentElement.clientWidth;
+    let newScale = 0.6;
+
+    if(currentClientWidth > 1000) {
+        newScale = Math.min(1, 0.85 * currentClientWidth / 1100);
+    } else if(currentClientWidth < 695) {
+        newScale = 0.6 * currentClientWidth / 695;
+    }
+    
+    document.querySelector("meta[name=viewport]").setAttribute("content",
+        `width=device-width, initial-scale=${newScale}, minimum-scale=${newScale}, maximum-scale=${newScale}, user-scalable=0`);
+}
+
+/**
  * Initializes all necessary variables.
  */
 function initialize() {
     
-    /*
-    *   For better use with a Tablet
-    */
-    if (document.documentElement.clientWidth > 1000) { 
-        document.querySelector("meta[name=viewport]").setAttribute("content", 
-            "initial-scale=0.85, maximum-scale=0.85, user-scalable=0");
-    }
+    rescaleMobileViewports();
 
     // initialization of the input fields and sliders
     seriesSelector.selectedIndex = 0;
@@ -358,6 +374,24 @@ function initialize() {
     initializeRenderer2D();
 
     propagateAllChangesInTheUI();
+
+    registerServiceWorker();
+}
+
+/**
+ * Registers the Service Worker in service_worker.js for offline functionality as a PWA.
+ */
+function registerServiceWorker() {
+    if('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service_worker.js')
+                .then(registration => {
+                    console.log('Service Worker registriert mit Scope:', registration.scope);
+                }).catch(error => {
+                    console.log('Registrieren des Service Workers fehlgeschlagen:', error);
+                });
+        });
+    }
 }
 
 /**
@@ -606,6 +640,7 @@ function toggleDarkMode() {
     const darkMode = document.documentElement.className == 'light';
     document.documentElement.className = darkMode ? 'dark' : 'light';
     setDarkModeToggleIcon(darkMode);
+    setHelpButtonIcon(darkMode);
     setPauseButtonIcon(rendering, darkMode);
     updateMainColors();
     const hideButtonImages = getInputSeriesChild(2, htmlElement);
@@ -637,6 +672,14 @@ function updateMainColors() {
  */
 function setDarkModeToggleIcon(darkMode) {
     darkModeToggle.src = darkMode ? darkModeToggleDarkModeImage : darkModeToggleLightModeImage;
+}
+
+/**
+ * Sets the current icon of the help button in the top left corner of the view.
+ * @param {boolean} darkMode - If _true_, the color of the icon will be lighter.
+ */
+function setHelpButtonIcon(darkMode) {
+    helpButton.src = darkMode ? helpButtonDarkModeImage : helpButtonLightModeImage;
 }
 
 /**
@@ -774,6 +817,7 @@ function addEntry(focus = true) {
 
     const hideButton = document.createElement("img");
     hideButton.setAttribute("class","icon clickable");
+    hideButton.setAttribute("alt","Folge verstecken oder anzeigen.");
     if(darkMode) {
         hideButton.setAttribute("src", showDarkModeImage);
     } else {
@@ -783,6 +827,7 @@ function addEntry(focus = true) {
 
     const deleteButton = document.createElement("img");
     deleteButton.setAttribute("class","icon delete-button clickable");
+    hideButton.setAttribute("alt","Folge löschen.");
     if(darkMode) {
         deleteButton.setAttribute("src", deleteDarkModeImage);
     } else {
@@ -816,10 +861,10 @@ function deleteParentContainer(child) {
 
 /**
  * Man, what a glow up.
- * @param {KeyboardEvent} event - **event.key** contains the key that was just pressed, e.g. "g".
+ * @param {KeyboardEvent} event - **event.key** contains the key that was just pressed, e.g. "G" (shift + g).
  */
 function glowUp(event) {
-    if(event.key != "g") {
+    if(event.key != "G") {
         return;
     }
     const main = document.getElementsByTagName('main');

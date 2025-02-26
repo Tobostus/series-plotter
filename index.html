@@ -15,22 +15,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
 
 <!DOCTYPE html> 
-<html>
+<html lang="de">
   <head>
     <title>Folgenplotter</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, user-scalable=0"/>
-    <meta name="description" content="Ein Tool, um mathematische Folgen von Zahlen und Funktionen zu visualisieren.">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, user-scalable=0" />
+    <meta name="description" content="Ein Tool, um mathematische Folgen von Zahlen und Funktionen zu visualisieren." />
     <meta name="keywords" content="Folgenplotter">
-    <link rel="icon" href="images/Icon.png">
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="images/Icon.png" />
+    <link rel="stylesheet" href="styles/style.css" />
     <script language="javascript" type="text/javascript" nomodule src="scripts/nomoduleinfo.js"></script>
     <script language="javascript" type="module" src="scripts/protocolinfo.js"></script>
     <script language="javascript" type="module" src="scripts/uiupdater.js" defer></script>
   </head>
 
   <body>
-    <img id="dark-mode-toggle" class="icon clickable" src="images/dark_mode_toggle_dark_mode.png">
+    <img id="dark-mode-toggle" class="icon clickable top-corner" src="images/dark_mode_toggle_dark_mode.png" alt="Button, um den Darkmode ein- oder auszuschalten." />
+    <a href="https://github.com/Tobostus/series-plotter" aria-label="Unter diesem Link kannst du die Dokumentation des Programms im GitHub Repository nachlesen.">
+      <img id="help-button" class="icon clickable top-corner" src="images/help_dark_mode.png" alt="Button, um die Dokumentation zu öffnen." />
+    </a>
     <main>
       <div id="sidebar-left" class="sidebar">
         <select id="series-selector" class="rounded-border clickable">
@@ -40,19 +44,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
         <div id="series-container" class="rounded-border">
           <ul id="list-of-series">
             <li>
-              <input id="first-series-color" type="color" value="#808080" class="rounded-border">
-              <input id="first-series" class="input-text" type="text" value="(n^2)/20">
-              <img id="first-series-hide" class="icon clickable" src="images/show_dark_mode.png">
-              <img id="first-series-delete" class="icon delete-button clickable" src="images/delete_dark_mode.png">
+              <input id="first-series-color" type="color" value="#808080" class="rounded-border" />
+              <input id="first-series" class="input-text" type="text" value="(n^2)/20" />
+              <img id="first-series-hide" class="icon clickable" src="images/show_dark_mode.png" alt="Folge verstecken oder anzeigen." />
+              <img id="first-series-delete" class="icon delete-button clickable" src="images/delete_dark_mode.png" alt="Folge löschen." />
             </li>
           </ul>
-          <input type="button" id="add-series" class="rounded-border clickable" value="+">
+          <input type="button" id="add-series" class="rounded-border clickable" value="+" />
         </div>
       </div>
 
       <div id="canvas-wrapper">
-        <input type="button" id="render-button" class="canvas-stack rounded-border clickable" value="Rendern starten!">
-        <img id="pause-button" class="canvas-stack clickable" src="images/play_dark_mode.png" hidden>
+        <input type="button" id="render-button" class="canvas-stack rounded-border clickable" value="Rendern starten!" />
+        <img id="pause-button" class="canvas-stack clickable" src="images/play_dark_mode.png" hidden />
         <div id="current-n-label" class="canvas-stack" hidden>n&nbsp;=&nbsp;0.00</div>
         <div id="canvas-overlay" class="canvas-stack"></div>
         <canvas id="canvas2D" class="canvas-stack" width="600" height="600">Your browser does not support the HTML5 canvas tag.</canvas>
@@ -66,52 +70,52 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
         </select>
         <div id="n-range">
           <div class="rounded-border just-numbers">
-            <input type="text" id="min-n" class="number-input" value="1">
+            <input type="text" id="min-n" class="number-input" value="1" />
           </div>
           <div id="n-symbol">≤&nbsp;&nbsp;n&nbsp;&nbsp;≤</div>
           <div class="rounded-border just-numbers">
-            <input type="text" id="max-n" class="number-input" value="100">
+            <input type="text" id="max-n" class="number-input" value="100" />
           </div>
         </div>
         <div id="n-temporal-range" class="hidden">
           <div class="rounded-border just-numbers">
-            <input type="text" id="min-n-temporal" class="number-input" value="0">
+            <input type="text" id="min-n-temporal" class="number-input" value="0" />
           </div>
           <div id="n-symbol-temporal">≤&nbsp;&nbsp;n&nbsp;&nbsp;≤</div>
           <div class="rounded-border just-numbers">
-            <input type="text" id="max-n-temporal" class="number-input" value="40">
+            <input type="text" id="max-n-temporal" class="number-input" value="40" />
           </div>
         </div>
         <input type="range" id="current-n" min="0" max="40" value="0" hidden>
         <div id="more-options" class="rounded-border scrollable">
           <div id="x-resolution-slider-wrapper" class="an-option-slider-container hidden">
             <label for="x-resolution-slider" id="x-resolution-slider-label" class="slider-label">x-Auflösung:&nbsp;<div>1</div></label>
-            <input type="range" id="x-resolution-slider" class="an-option-slider" min="1" max="460" value="100" step="1">
+            <input type="range" id="x-resolution-slider" class="an-option-slider" min="1" max="460" value="100" step="1" />
           </div>
           <div id="animation-duration-slider-wrapper" class="an-option-slider-container hidden">
             <label for="animation-duration-slider" id="animation-duration-slider-label" class="slider-label">Animationsdauer:&nbsp;<div>1</div></label>
-            <input type="range" id="animation-duration-slider" class="an-option-slider" min="3" max="480" value="120" step="1">
+            <input type="range" id="animation-duration-slider" class="an-option-slider" min="3" max="480" value="120" step="1" />
           </div>
           <div id="interpolation-option-wrapper" class="an-option hidden">
-            <input type="checkbox" id="interpolation" checked>
+            <input type="checkbox" id="interpolation" checked />
             <label for="interpolation">Interpolation</label>
           </div>
           <div class="an-option">
-            <input type="checkbox" id="spatial-connection-lines" checked>
+            <input type="checkbox" id="spatial-connection-lines" checked />
             <label for="spatial-connection-lines">Verbindungslinien</label>
           </div>
           <div id="lowering-resolution-wrapper" class="an-option">
-            <input type="checkbox" id="lowering-resolution" checked>
+            <input type="checkbox" id="lowering-resolution" checked />
             <label for="lowering-resolution">Dynamische Auflösung</label>
           </div>
           <div id="coordinate-system-toggle-wrapper" class="an-option">
-            <input type="checkbox" id="coordinate-system-toggle" checked>
+            <input type="checkbox" id="coordinate-system-toggle" checked />
             <label for="coordinate-system-toggle">Koordinatensystem</label>
           </div>
         </div>
         <div id="import-export">
           <label for="import-hidden" id="import" class="rounded-border clickable">Importieren</label>
-          <input type="file" accept=".xml" id="import-hidden" hidden>
+          <input type="file" accept=".xml" id="import-hidden" hidden />
           <a id="export" class="rounded-border clickable">Exportieren</a>
         </div>
       </div>

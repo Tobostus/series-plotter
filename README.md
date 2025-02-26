@@ -6,6 +6,9 @@ Mit diesem Tool kann man sich beliebige reelle Zahlenfolgen oder reelle Funktion
 ## Zugang
 Die aktuelle Version des Tools ist unter https://tobostus.github.io/series-plotter verfügbar.
 
+### Installation der PWA
+Es ist außerdem möglich, das Tool mit kompatiblen Browsern als [Progressive Web App](https://de.wikipedia.org/wiki/Progressive_Web_App) (PWA) zu installieren. Die App erscheint dann wie andere native Apps auf eurem Home-Bildschirm und kann auch offline genutzt werden. Ihr müsst dafür lediglich die [Seite](https://tobostus.github.io/series-plotter) wie ein Lesezeichen zu eurem Home-Bildschirm hinzufügen.
+
 ## Kompatibilitätshinweis
 Das Projekt verwendet JavaScript-Module. Module werden von jedem modernen Browser unterstützt.
 Stellt sicher, dass ihr die Seite über **http** oder **https** aufruft.

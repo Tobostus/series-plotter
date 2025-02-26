@@ -233,7 +233,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .glow-up {
-  filter: drop-shadow(0 0 5px var(--active-color));
+  filter: drop-shadow(0 0 3px var(--active-color));
   transition-duration: 0.5s;
 }
 
@@ -424,15 +424,22 @@ a:link, a:visited, a:hover, a:active {
   margin-left: calc(var(--margins)/2);
 }
 
-#dark-mode-toggle {
+.top-corner {
   aspect-ratio: 1 / 1;
   position: absolute;
-  right: 0;
   top: 0;
   z-index: 2;
   width: 25px;
   height: 25px;
   margin: 8px;
+}
+
+#dark-mode-toggle {
+  right: 0;
+}
+
+#help-button {
+  left: 0;
 }
 
 #pause-button {

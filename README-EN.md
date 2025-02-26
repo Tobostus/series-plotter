@@ -4,13 +4,16 @@ With this tool, you can visualize any series of real numbers or series of real f
 ## Access
 The current version is available under https://tobostus.github.io/series-plotter.
 
+### Installing the PWA
+You can also install the tool as a [Progressive Web App](https://en.wikipedia.org/wiki/Progressive_web_app) (PWA) using supported browsers. You will be able to use it offline and it will be placed on your home screen like any other native app. All you have to do is add the [website](https://tobostus.github.io/series-plotter) to your home screen like you would add a bookmark.
+
 ## Compatibility disclaimer
 This project uses JavaScript Modules. Modules are supported by every modern web browser.
 Make sure to access the web app via **http** or **https**.
 In case you want to self-host a copy of this program to experiment with, we recommend using [VSCode](https://code.visualstudio.com/) with Ritwick Dey's Extension **Live Server**.
 
 ## User interface
-*This program is optimized for use with [Firefox](https://www.mozilla.org/de/firefox/new/). Other browsers might render elements differently.*
+*This program is optimized for use with [Firefox](https://www.mozilla.org/en-US/firefox/new/). Other browsers might render elements differently.*
 
 When you first open the page, you are greeted by this user interface (an English version might be added in a later update):
 
