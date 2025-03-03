@@ -400,13 +400,16 @@ function resetThenImportAndLoadXML(file) {
 function registerServiceWorker() {
     if('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('../service_worker.js')
+            const scriptPath = `${window.location.pathname}service_worker.js`;
+            navigator.serviceWorker.register(scriptPath, { scope: "./" })
                 .then(registration => {
                     console.log('Service Worker registriert mit Scope:', registration.scope);
                 }).catch(error => {
-                    console.log('Registrieren des Service Workers fehlgeschlagen:', error);
+                    console.error('Registrieren des Service Workers fehlgeschlagen:', error);
                 });
         });
+    } else {
+        console.error("Service Worker werden hier nicht unterstützt.");
     }
 }
 
