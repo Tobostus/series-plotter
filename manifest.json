@@ -16,5 +16,15 @@
   "start-url": "./",
   "display": "standalone",
   "theme_color": "#202020",
-  "background_color": "#121212"
+  "background_color": "#121212",
+  "file_handlers": [
+    {
+      "action": "./",
+      "accept": {
+        "application/xml": [
+          ".xml"
+        ]
+      }
+    }
+  ]
 }

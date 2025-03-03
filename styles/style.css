@@ -196,7 +196,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .scrollable {
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .clickable {
@@ -243,7 +243,6 @@ a:link, a:visited, a:hover, a:active {
   height: 100%;
   padding: 0;
   overflow-x: hidden;
-  overflow-y: scroll;
 }
 
 #add-series {

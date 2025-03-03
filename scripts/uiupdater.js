@@ -278,7 +278,7 @@ function addEventListeners() {
         }
     });
 
-    seriesSelector.addEventListener("change", function() {
+    seriesSelector.addEventListener("change", () => {
         updateUIForTypeOfSeries(seriesSelector.selectedIndex);
         updateVisualizationStyle();
     });
@@ -293,31 +293,18 @@ function addEventListeners() {
     visualizationSelector.addEventListener("change", updateVisualizationStyle);
 
     addEnterListener(firstSeries, useNewInput);
-    firstSeriesColor.addEventListener("change", function() {
+    firstSeriesColor.addEventListener("change", () => {
         useNewInput();
     });
 
-    importButton.addEventListener("click", function() { importInput.value = null; });
-    importInput.addEventListener("change", function(event) {
-        clearAllVariables();
-        clearAllSeries();
-        importXML(event.target.files[0])
-            .then(msg => {
-                console.log(msg);
-                applySettingsFromXML();
-            })
-            .catch(error => {
-                clearAllVariables();
-                clearAllSeries();
-                console.error(error);
-            });
-    });
-    exportButton.addEventListener("click", function() {
+    importButton.addEventListener("click", () => { importInput.value = null; });
+    importInput.addEventListener("change", (event) => { resetThenImportAndLoadXML(event.target.files[0]); });
+    exportButton.addEventListener("click", () => {
         prepareXMLExport();
         exportXML();
     });
 
-    window.addEventListener("beforeunload", function(event) {
+    window.addEventListener("beforeunload", (event) => {
         // Warning if you try to reload or leave the page
         event.preventDefault();
     });
@@ -376,6 +363,35 @@ function initialize() {
     propagateAllChangesInTheUI();
 
     registerServiceWorker();
+    
+    // enable opening files from the context menu on desktop PWA
+    if('launchQueue' in window) {
+        window.launchQueue.setConsumer(async (launchParams) => {
+            if(launchParams.files && launchParams.files.length) {
+                const file = await launchParams.files[0].getFile();
+                resetThenImportAndLoadXML(file);
+            }
+        });
+    }
+}
+
+/**
+ * Uses methods from file_io.js to load an exported xml file into the program.
+ * @param {File} file - The XML file to be imported.
+ */
+function resetThenImportAndLoadXML(file) {
+    clearAllVariables();
+    clearAllSeries();
+    importXML(file)
+        .then(msg => {
+            console.log(msg);
+            applySettingsFromXML();
+        })
+        .catch(error => {
+            clearAllVariables();
+            clearAllSeries();
+            console.error(error);
+        });
 }
 
 /**
@@ -384,7 +400,7 @@ function initialize() {
 function registerServiceWorker() {
     if('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service_worker.js')
+            navigator.serviceWorker.register('../service_worker.js')
                 .then(registration => {
                     console.log('Service Worker registriert mit Scope:', registration.scope);
                 }).catch(error => {
@@ -817,7 +833,7 @@ function addEntry(focus = true) {
 
     const hideButton = document.createElement("img");
     hideButton.setAttribute("class","icon clickable");
-    hideButton.setAttribute("alt","Folge verstecken oder anzeigen.");
+    hideButton.setAttribute("alt","Folge verstecken oder anzeigen");
     if(darkMode) {
         hideButton.setAttribute("src", showDarkModeImage);
     } else {
@@ -827,7 +843,7 @@ function addEntry(focus = true) {
 
     const deleteButton = document.createElement("img");
     deleteButton.setAttribute("class","icon delete-button clickable");
-    hideButton.setAttribute("alt","Folge löschen.");
+    deleteButton.setAttribute("alt","Folge löschen");
     if(darkMode) {
         deleteButton.setAttribute("src", deleteDarkModeImage);
     } else {

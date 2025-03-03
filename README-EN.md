@@ -4,8 +4,18 @@ With this tool, you can visualize any series of real numbers or series of real f
 ## Access
 The current version is available under https://tobostus.github.io/series-plotter.
 
-### Installing the PWA
-You can also install the tool as a [Progressive Web App](https://en.wikipedia.org/wiki/Progressive_web_app) (PWA) using supported browsers. You will be able to use it offline and it will be placed on your home screen like any other native app. All you have to do is add the [website](https://tobostus.github.io/series-plotter) to your home screen like you would add a bookmark.
+## Installing the PWA
+You can also install the tool as a [Progressive Web App](https://en.wikipedia.org/wiki/Progressive_web_app) (PWA) using supported browsers. You will then be able to launch it from your home screen like a native app and even be able to use it offline.
+
+### Phone, tablet, etc.
+All you have to do is add the [website](https://tobostus.github.io/series-plotter) to your home screen like a bookmark and then open it at least once.
+
+### Desktop
+On desktop, installing the PWA also allows you to open exported files from the system's file explorer, e.g. using a right-click. You can, for example, install the PWA using [Chrome](https://www.google.com/intl/us_en/chrome/) by doing the following on the [website](https://tobostus.github.io/series-plotter):
+
+> Options $\rightarrow$ Cast, save, and share $\rightarrow$ Install page as app...
+
+*Note that [Firefox](https://www.mozilla.org/en-US/firefox/new/) currently does not [support](https://en.wikipedia.org/wiki/Progressive_web_app#Browser_support) PWAs on desktop.*
 
 ## Compatibility disclaimer
 This project uses JavaScript Modules. Modules are supported by every modern web browser.
@@ -13,7 +23,7 @@ Make sure to access the web app via **http** or **https**.
 In case you want to self-host a copy of this program to experiment with, we recommend using [VSCode](https://code.visualstudio.com/) with Ritwick Dey's Extension **Live Server**.
 
 ## User interface
-*This program is optimized for use with [Firefox](https://www.mozilla.org/en-US/firefox/new/). Other browsers might render elements differently.*
+*The user interface is currently optimized for use with [Firefox](https://www.mozilla.org/en-US/firefox/new/). Other browsers might render elements differently.*
 
 When you first open the page, you are greeted by this user interface (an English version might be added in a later update):
 
@@ -36,6 +46,8 @@ The circle to the left of a series is a color picker that lets you change the co
 7. The button "Exportieren" (_export_) lets you export all your inputs and settings as an XML file. This file will automatically be downloaded to your device when you click the button.
 
 8. The button "Importieren" (_import_) lets you load everything from a file created with "Exportieren" (7) back into the program.
+
+9. The button in the top left corner that lets you open _this documentation_ on GitHub.
 
 On mobile devices or depending on the width of your browser window, the user interface changes into vertical mode. The layout may change slightly, but all features stay available.
 

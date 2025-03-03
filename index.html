@@ -31,9 +31,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
   </head>
 
   <body>
-    <img id="dark-mode-toggle" class="icon clickable top-corner" src="images/dark_mode_toggle_dark_mode.png" alt="Button, um den Darkmode ein- oder auszuschalten." />
-    <a href="https://github.com/Tobostus/series-plotter" aria-label="Unter diesem Link kannst du die Dokumentation des Programms im GitHub Repository nachlesen.">
-      <img id="help-button" class="icon clickable top-corner" src="images/help_dark_mode.png" alt="Button, um die Dokumentation zu öffnen." />
+    <img id="dark-mode-toggle" class="icon clickable top-corner" src="images/dark_mode_toggle_dark_mode.png" alt="Darkmode umschalten" />
+    <a href="https://github.com/Tobostus/series-plotter" aria-label="Link zur Dokumentation">
+      <img id="help-button" class="icon clickable top-corner" src="images/help_dark_mode.png" alt="Dokumentation öffnen" />
     </a>
     <main>
       <div id="sidebar-left" class="sidebar">
@@ -41,13 +41,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
           <option value="series-real-numbers">Reelle Zahlenfolgen</option>
           <option value="series-real-functions">Reelle Funktionenfolgen</option>
         </select>
-        <div id="series-container" class="rounded-border">
+        <div id="series-container" class="rounded-border scrollable">
           <ul id="list-of-series">
             <li>
               <input id="first-series-color" type="color" value="#808080" class="rounded-border" />
               <input id="first-series" class="input-text" type="text" value="(n^2)/20" />
-              <img id="first-series-hide" class="icon clickable" src="images/show_dark_mode.png" alt="Folge verstecken oder anzeigen." />
-              <img id="first-series-delete" class="icon delete-button clickable" src="images/delete_dark_mode.png" alt="Folge löschen." />
+              <img id="first-series-hide" class="icon clickable" src="images/show_dark_mode.png" alt="Folge verstecken/anzeigen" />
+              <img id="first-series-delete" class="icon delete-button clickable" src="images/delete_dark_mode.png" alt="Folge löschen" />
             </li>
           </ul>
           <input type="button" id="add-series" class="rounded-border clickable" value="+" />
@@ -56,7 +56,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
 
       <div id="canvas-wrapper">
         <input type="button" id="render-button" class="canvas-stack rounded-border clickable" value="Rendern starten!" />
-        <img id="pause-button" class="canvas-stack clickable" src="images/play_dark_mode.png" hidden />
+        <img id="pause-button" class="canvas-stack clickable" src="images/play_dark_mode.png" alt="Animation pausieren/starten" hidden />
         <div id="current-n-label" class="canvas-stack" hidden>n&nbsp;=&nbsp;0.00</div>
         <div id="canvas-overlay" class="canvas-stack"></div>
         <canvas id="canvas2D" class="canvas-stack" width="600" height="600">Your browser does not support the HTML5 canvas tag.</canvas>

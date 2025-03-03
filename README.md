@@ -6,8 +6,18 @@ Mit diesem Tool kann man sich beliebige reelle Zahlenfolgen oder reelle Funktion
 ## Zugang
 Die aktuelle Version des Tools ist unter https://tobostus.github.io/series-plotter verfügbar.
 
-### Installation der PWA
-Es ist außerdem möglich, das Tool mit kompatiblen Browsern als [Progressive Web App](https://de.wikipedia.org/wiki/Progressive_Web_App) (PWA) zu installieren. Die App erscheint dann wie andere native Apps auf eurem Home-Bildschirm und kann auch offline genutzt werden. Ihr müsst dafür lediglich die [Seite](https://tobostus.github.io/series-plotter) wie ein Lesezeichen zu eurem Home-Bildschirm hinzufügen.
+## Installation der PWA
+Es ist außerdem möglich, das Tool mit kompatiblen Browsern als [Progressive Web App](https://de.wikipedia.org/wiki/Progressive_Web_App) (PWA) zu installieren. Die App erscheint dann wie andere native Apps auf eurem Startbildschirm und kann auch offline genutzt werden. 
+
+### Handy, Tablet und co.
+Hier müsst ihr lediglich die [Seite](https://tobostus.github.io/series-plotter) wie ein Lesezeichen zu eurem Startbildschirm hinzufügen und einmal öffnen.
+
+### Desktop
+Auf dem Desktop ermöglicht die Installation zusätzlich, exportierte Dateien aus dem Kontextmenü des Dateiexplorers heraus zu öffnen, z.B. per Rechtsklick. Installieren könnt ihr die PWA z.B. unter [Chrome](https://www.google.com/intl/de_de/chrome/), indem ihr auf der [Seite](https://tobostus.github.io/series-plotter) Folgendes tut:
+
+> Menü $\rightarrow$ Streamen, speichern und teilen $\rightarrow$ Seite als App installieren...
+
+*Beachtet, dass [Firefox](https://www.mozilla.org/de/firefox/new/) aktuell leider keine PWAs auf dem Desktop [unterstützt](https://en.wikipedia.org/wiki/Progressive_web_app#Browser_support).*
 
 ## Kompatibilitätshinweis
 Das Projekt verwendet JavaScript-Module. Module werden von jedem modernen Browser unterstützt.
@@ -15,7 +25,7 @@ Stellt sicher, dass ihr die Seite über **http** oder **https** aufruft.
 Falls ihr für Testzwecke selbst eine lokale Kopie hosten wollt, empfehlen wir [VSCode](https://code.visualstudio.com/) mit der Extension **Live Server** von Ritwick Dey.
 
 ## Benutzeroberfläche
-*Das Programm ist für die Nutzung mit [Firefox](https://www.mozilla.org/de/firefox/new/) optimiert. In anderen Browsern können Elemente anders aussehen.*
+*Die Benutzeroberfläche ist aktuell für die Nutzung mit [Firefox](https://www.mozilla.org/de/firefox/new/) optimiert. In anderen Browsern können Elemente anders aussehen.*
 
 Wenn ihr die Seite aufruft, werdet ihr von folgender Nutzeroberfläche begrüßt:
 
@@ -38,6 +48,8 @@ aus- oder eingeblendet werden. Die Kreisscheibe links von einer Folge ist ein Fa
 7. Mit dem Button "Exportieren" könnt ihr all eure Eingaben und Einstellungen in einer XML-Datei exportieren. Diese wird beim Klick auf den Button automatisch heruntergeladen.
 
 8. Mit dem Button "Importieren" könnt ihr eine mithilfe von "Exportieren" (7) erstellte XML-Datei wieder in das Programm laden.
+
+9. Mit dem Button in der oberen linken Ecke könnt ihr _diese Dokumentation_ auf GitHub aufrufen.
 
 Auf Mobilgeräten oder abhängig von der Breite des Browserfensters wechselt die Oberfläche in den vertikalen Modus. Die Anordnung der Elemente ist dann etwas anders, aber die Funktionen bleiben gleich.
 

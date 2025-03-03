@@ -17,7 +17,7 @@
 /**
  * Change this version number if there are any changes to the progressive web app (PWA).
  */
-const VERSION = "v1";
+const VERSION = "v0.1.0";
 const CACHE_NAME = `folgenplotter-${VERSION}`;
 const INITIAL_CACHED_RESOURCES = [
     "./",
